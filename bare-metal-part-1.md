@@ -27,7 +27,7 @@ I recently conducted a test to see the average latency between two worker nodes 
 Our Packet bare metal cluster has an instance size of m1.xlarge.x86 you can view the specs [here](https://www.packet.com/cloud/servers/m1-xlarge/). 
 After running scripts that deployed the pods and runs the latency test results are below.
 
-![Image of packetlate](https://github.com/cloudoutloud/blog-images/blob/master/packetlate.png)
+![Image of packetlate](https://github.com/cloudoutloud/clblogs/blob/master/images/packetlate.png)
 
 
 For AWS and instance size of m5d.16xlarge was used which is the closer spec I could find to the Packet instance, you can view specs [here](https://aws.amazon.com/ec2/instance-types/).
