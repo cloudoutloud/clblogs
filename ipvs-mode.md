@@ -1,30 +1,30 @@
 ## Running Kube-proxy in super mode!
 
-##### The modes of Kube-proxy
+### The modes of Kube-proxy
 First off Kube-proxy is a network proxy that runs as a daemonset in the kube-system namespace this ensures at least one pod is running on all nodes in the cluster.
 Kube-proxy's main job is to load balance traffic that is destined for services via (cluster IP’s and node port) to the correct backend pods. The current modes Kube-proxy can run in are IPtables (most common and default mode) and IPVS. There is also a third mode userspace, but this is very old and slow so please do not use it! and we will not mention.
 
-##### IPtables mode
+### IPtables mode
 So let's have a recap of the most standard mode most clusters run Kube-proxy as.
 IPtables is a Linux kernel feature designed to be an efficient firewall. The Kube-proxy programs the IPtables rules means that it is nominally an O(n) style algorithm, where n grows roughly in proportion to your cluster size. So it scales to accommodate the number of services and it’s backend pods. It uses a randomized equal-cost selection algorithm. The downside is IPtables struggles to scale as cluster grow larger as it's designed purely as a firewall with a rules list chain approach. For example, Kubernetes v.1.17 can support up to 5000 nodes but running Iptables could become a nasty bottleneck.
 
-##### IPVS mode to the rescue
+### IPVS mode to the rescue
 IPVS which stands for “IP Virtual Server”. It was introduced way back in Kubernetes v1.11 release but it's often overlooked and underutilized.
 If you have 1000’s of services and large node clusters it would be more efficient to use IPVS mode over IPtables. IPVS is a mature Linux feature specifically designed for load balancing lots of services. It has an API and a lookup routine rather than an iptables list of sequential rules approach. Request routing is done in kernel space so super fast.
 Has a nominal computational complexity of O(1). Its connection processing performance will stay constant independent of your cluster size. Uses more efficient data structures (hash tables) allowing for almost unlimited scale under the hood and can use different load balancing methods default is good old round-robin.
 
-##### Pros of using IPVS 
+### Pros of using IPVS 
 - Purley designed for load balancing.
 - Based on faster performing in-kernel hash tables.
 - Can help kube-proxy to improve cluster performance, when a cluster has 1000’s of services.
 - Can support a rich set of connection scheduling algorithms for load balancing.
 
-##### Cons of using IPVS 
+### Cons of using IPVS 
 - Cannot rewrite destination as packet cannot be amended.
 - As-built for load balancing cannot handle other kube-proxy workarounds such as packet filtering, hairpin-masquerade tricks and SNAT.
 - If you plan to use IPVS with other programs that use iptables your need to test if they behave as expected together as the routing approach is different.
 
-##### Enabling and configuration
+### Enabling and configuration
 
 If running managed services of Kubernetes such as AKS, EKS and GKE. Enabling and configuration may be slightly different. Please consult vendor documentation.
 Below is how you can enable and configure on a fully managed cluster using `kubeadm` to provision. In this case, we want to enable IPVS mode on an existing cluster that is running IPtables.
@@ -73,7 +73,7 @@ Optionally you can use ipvsadm CLI tool to interact with IP virtual server in th
 
 
 
-##### Links 
+### Links 
 [ipvsadm (man-page)](https://linux.die.net/man/8/ipvsadm)
 
 [IP Virtual Server (wikipedia)](https://en.wikipedia.org/wiki/IP_Virtual_Server)
