@@ -27,12 +27,11 @@ I recently conducted a test to see the average latency between two worker nodes 
 Our Packet bare metal cluster has an instance size of m1.xlarge.x86 you can view the specs [here](https://www.packet.com/cloud/servers/m1-xlarge/). 
 After running scripts that deployed the pods and runs the latency test results are below.
 
-![Image of packetlate](https://github.com/cloudoutloud/clblogs/blob/master/images/packetlate.png)
-
+![Image of packetlate](/images/bare-metal/packetlate.png)
 
 For AWS and instance size of m5d.16xlarge was used which is the closer spec I could find to the Packet instance, you can view specs [here](https://aws.amazon.com/ec2/instance-types/).
 
-<pic>
+![Image of awslate](/images/bare-metal/awslate.png)
 
 As you can see from result latency is almost 3x as much between pods on AWS VM instances. If you are looking for low latency within your cluster Packet is clearly the preferred option. Few things to note we also have workload running on our Packet test cluster but latency is still a lot less!
 
@@ -44,11 +43,11 @@ To measure disk speed on the cluster we can use the Linux dd command. We run the
 
 ```dd if=/dev/zero of=/tmp/test1.img bs=1G count=1 oflag=dsync```
 
-<pic>
-
-<pic>
+![Image of packerclusternode](/images/bare-metal/packetclusternode.png)
 
 As you can see Packet is faster finishing at 4.3 seconds and transferred 246 MB/s.
+
+![Image of awsclusternode](/images/bare-metal/awsclusternode.png)
 
 ---
 
