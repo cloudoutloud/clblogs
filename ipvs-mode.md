@@ -13,11 +13,14 @@ IPVS which stands for “IP Virtual Server”. It was introduced way back in Kub
 If you have 1000’s of services and large node clusters it would be more efficient to use IPVS mode over IPtables. IPVS is a mature Linux feature specifically designed for load balancing lots of services. It has an API and a lookup routine rather than an iptables list of sequential rules approach. Request routing is done in kernel space so super fast.
 Has a nominal computational complexity of O(1). Its connection processing performance will stay constant independent of your cluster size. Uses more efficient data structures (hash tables) allowing for almost unlimited scale under the hood and can use different load balancing methods default is good old round-robin.
 
+![image of kube-ipvs-mode](/images/ipvs-mode/kube-in-ipvs.png)
+
 ### Pros of using IPVS 
 - Purley designed for load balancing.
 - Based on faster performing in-kernel hash tables.
 - Can help kube-proxy to improve cluster performance, when a cluster has 1000’s of services.
 - Can support a rich set of connection scheduling algorithms for load balancing.
+- Very learn from a resourcing perspective uses a fraction of memory IPtables uses and no CPU.
 
 ### Cons of using IPVS 
 - Cannot rewrite destination as packet cannot be amended.
@@ -69,15 +72,13 @@ nq: never queue
 
 Optionally you can use ipvsadm CLI tool to interact with IP virtual server in the kernel. Install using, distro package manager such as ```yum install ipvsadm```
 
+### Conclusion 
 
-
-
+If you do find yourself running large clusters with over 1000 services. IPVS mode is the way to go in order to get the efficiency and performance you require. Even if you are not running huge amounts of services it may be still worth testing as IPVS may become the defacto standard in future Kubernetes releases.
 
 ### Links 
 [ipvsadm (man-page)](https://linux.die.net/man/8/ipvsadm)
-
 [IP Virtual Server (wikipedia)](https://en.wikipedia.org/wiki/IP_Virtual_Server)
-
 [kube-proxy(Kuberenets docs)](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)
 
 
