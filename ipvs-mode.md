@@ -78,7 +78,9 @@ If you do find yourself running large clusters with over 1000 services. IPVS mod
 
 ### Links 
 [ipvsadm (man-page)](https://linux.die.net/man/8/ipvsadm)
+
 [IP Virtual Server (wikipedia)](https://en.wikipedia.org/wiki/IP_Virtual_Server)
+
 [kube-proxy(Kuberenets docs)](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)
 
 
