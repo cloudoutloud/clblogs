@@ -1,4 +1,4 @@
-##Kubernetes running on the bare metal public cloud platform Packet!
+## Kubernetes running on the bare metal public cloud platform Packet!
 
 ### Part 2
 In this part, we will look at how easy it is to use popular open-source tools to achieve load balancing and service mesh networking within a bare metal Kubernetes cluster.

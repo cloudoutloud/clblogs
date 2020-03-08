@@ -1,6 +1,6 @@
-##Kubernetes running on the bare metal public cloud platform Packet!
+## Kubernetes running on the bare metal public cloud platform Packet!
 
-###Part 1
+### Part 1
 Kubernetes get more widely adopted by the large enterprise market as becoming the tool to deploy their apps within a cloud-native environment. Many companies choose to host their Kubernetes cluster on bare metal infrastructure compared with running on a public cloud provider such as AWS. Both have their benefits but in this post, I will discuss the positives on how bare metal is the ideal choice for large enterprises who want to start using cloud-native technology and want to reap to rewards of bare metal such as speed, security and full access to the underlying infrastructure.
 
 When it comes to bare metal consumers are often worried can they still use all the available open-source tools in the cloud-native ecosystem? the majority of the time the answer is there is no difference in the way you install tools on your cluster via either bare metal instances or public cloud virtual machines. I will go over this more in part 2 of this post.
@@ -13,7 +13,7 @@ I recently got a chance to trail there platform and deploy a Kubernetes cluster 
 
 ---
 
-###What is Packet?
+### What is Packet?
 [Packet](https://www.packet.com/) is a leading bare metal public cloud provider with over 22+ locations worldwide, so you never far from deploying bare metal in your chosen region. It is fully integrated with the most well known DevOps tool such as Terraform and Ansible. It has an easy to use simplistic user interface in which you can deploy bare metal in a few clicks, it's very fast to deploy averaging in under 60 seconds. There are some nice added features exclusive to Packet once instances are deployed you have SOS out of band access. In case you lose access to your instance due to misconfiguration or bad network connectivity, there is a peace of mind you will never be fully locked out from your machine. This can be crucial in troubleshooting situations.
 There is also an option to bring your own SSH keys to connect to your instances which is usually not an option with most public cloud providers. This gives you flexibility and also can reduce your security footprint by not having numerous keys lying around.
 Out of the box within the UI, there is also a timeline log so you can monitor who access and made changes to your instances as well time and date. This is always a nice added feature to have which requires no added config from the user's end.
@@ -38,7 +38,7 @@ As you can see from result latency is almost 3x as much between pods on AWS VM i
 ---
 
 
-###Write Speed on disk comparison to public cloud
+### Write Speed on disk comparison to public cloud
 To measure disk speed on the cluster we can use the Linux dd command. We run the following command. Both cluster nodes are running SSD hard drives.
 
 ```dd if=/dev/zero of=/tmp/test1.img bs=1G count=1 oflag=dsync```
@@ -51,7 +51,7 @@ As you can see Packet is faster finishing at 4.3 seconds and transferred 246 MB/
 
 ---
 
-###Cost comparison to public cloud
+### Cost comparison to public cloud
 For testing, we were using a four-node cluster. Instances on Packet are charged at an hourly rate for on-demand instances.
 
 ```Master node 1x c2.large.arm at $1.00 per hour```
