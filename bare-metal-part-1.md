@@ -22,7 +22,7 @@ Packet also supports many open source projects and is linked to many key foundat
 
 ---
 
-###Latency comparison to public cloud
+### Latency comparison to public cloud
 I recently conducted a test to see the average latency between two worker nodes in a Kubernetes cluster. The test was conducted using an iperf networking tool modified for Kubernetes usage. When the script is run it will deploy two pods one on each separate worker node and measure the latency between both pods.
 Our Packet bare metal cluster has an instance size of m1.xlarge.x86 you can view the specs [here](https://www.packet.com/cloud/servers/m1-xlarge/). 
 After running scripts that deployed the pods and runs the latency test results are below.
