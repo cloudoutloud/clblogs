@@ -65,8 +65,7 @@ This will traverse as following.
 3. Use endpoint in the region if not, 
 4. Use any endpoint at random.
 
-
-<Add diagram here>
+![image of service-topology](/images/service-topology/service-topology.png)
 
 
 ### Summary
