@@ -58,9 +58,10 @@ As you can see also as we have not set an IPVS scheduler it will use round-robin
 As mentioned earlier we have a few connection scheduling algorithms for load balancing to choose from.
 
 To switch load balancing methods 
-Set  ```--ipvs-scheduler=``` as a kube-proxy parameter.
+Set  ```--ipvs-scheduler=``` as a kube-proxy parameter or edit the kube-proxy config map.
+```kubectl -n kube-system edit configmap kube-proxy```
 
-Full list of options
+Full list of options below. Information [here](https://www.keepalived.org/doc/scheduling_algorithms.html)
 ```
 rr: round-robin
 lc: least connection
@@ -69,7 +70,6 @@ sh: source hashing
 sed: shortest expected delay
 nq: never queue
 ```
-
 Optionally you can use ipvsadm CLI tool to interact with IP virtual server in the kernel. Install using, distro package manager such as ```yum install ipvsadm```
 
 ### Conclusion 
