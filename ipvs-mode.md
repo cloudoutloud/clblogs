@@ -30,7 +30,30 @@ Has a nominal computational complexity of O(1). Its connection processing perfor
 ### Enabling and configuration
 
 If running managed services of Kubernetes such as AKS, EKS and GKE. Enabling and configuration may be slightly different. Please consult vendor documentation.
-Below is how you can enable and configure on a fully managed cluster using `kubeadm` to provision. In this case, we want to enable IPVS mode on an existing cluster that is running IPtables.
+Below is how you can enable and configure on a fully managed cluster using `kubeadm` to provision. 
+
+To enable on a new kubeadm cluster from scratch.
+
+You can add the below to your kubeadm configuration file.
+
+```yaml
+...
+kubeProxy:
+  config:
+    featureGates:
+      SupportIPVSProxyMode: true
+    mode: ipvs
+...
+```
+Pass the file with config flag when using the kubeadm init command.
+```kubeadm init --config=```
+
+Alternatively you can set flag below when running kubeadm init command.
+
+```kubeadm init --feature-gates=SupportIPVSProxyMode=true```
+
+
+To enable IPVS mode on an existing cluster that is running IPtables.
 
 Edit the existing configmap configuration
 ```kubectl edit configmap kube-proxy -n kube-system```
@@ -72,6 +95,82 @@ nq: never queue
 ```
 Optionally you can use ipvsadm CLI tool to interact with IP virtual server in the kernel. Install using, distro package manager such as ```yum install ipvsadm```
 
+### Demo Time!
+
+In this short demo, we will create a deployment and expose as a service. Then load balance to the backend endpoint pods using IPVS. We have the cluster already set up using IPVS mode with 1x master and 2x worker nodes.
+Let’s verify the IPVS config using the command on each node. This will show `rr` for round-robin.
+
+```ipvsadm -l```
+
+```IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  ip-10-96-0-1.us-east-2.compu rr
+  -> ip-172-31-8-196.us-east-2.co Masq    1      5          0
+TCP  ip-10-96-0-10.us-east-2.comp rr
+  -> ip-10-32-0-2.us-east-2.compu Masq    1      0          0
+  -> ip-10-32-0-3.us-east-2.compu Masq    1      0          0
+TCP  ip-10-96-0-10.us-east-2.comp rr
+  -> ip-10-32-0-2.us-east-2.compu Masq    1      0          0
+  -> ip-10-32-0-3.us-east-2.compu Masq    1      0          0
+UDP  ip-10-96-0-10.us-east-2.comp rr
+  -> ip-10-32-0-2.us-east-2.compu Masq    1      0          0
+  -> ip-10-32-0-3.us-east-2.compu Masq    1      0          0
+  ```
+
+Now let’s create the deployment using image `whats-my-ip`
+
+```kubectl run myip --image=cloudnativelabs/whats-my-ip --replicas=2 --port=8080```
+
+Two pods have been deployed across the two worker nodes.
+
+`10.44.0.1` Endpoint for kube-worker1
+`10.36.0.1` Endpoint for kube-worker2
+
+```
+NAME                   READY   STATUS    RESTARTS   AGE   IP          NODE           NOMINATED NODE   READINESS GATES
+myip-b4ffc5c6f-6l2hc   1/1     Running   0          11s   10.36.0.1   kube-worker2   <none>           <none>
+myip-b4ffc5c6f-dwb7f   1/1     Running   0          11s   10.44.0.1   kube-worker1   <none>           <none>
+```
+
+Expose the deployment as a service (nodeport)
+```kubectl expose deployment myip --port=8080 --target-port=8080 --type=NodePort```
+
+We can see svc was created and the endpoints listed
+```kubectl get svc```
+```
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP          35m
+myip         NodePort    10.98.98.178   <none>        8080:31579/TCP   9s
+```
+
+```kubectl get ep -o wide```
+```
+NAME         ENDPOINTS                       AGE
+kubernetes   172.31.8.196:6443               35m
+myip         10.36.0.1:8080,10.44.0.1:8080   27s
+```
+
+We can now access the svc by running a curl command below to the node IP. This will return information back from application.
+
+```curl <node ip>:<node port>```
+
+So from the master node if we curl worker node 2 IP address on service node port we can see this is load balancing between both endpoints in a round-robin fashion.
+
+```
+[centos@kube-master ~]$ curl 172.31.35.73:31579
+HOSTNAME:myip-b4ffc5c6f-dwb7f IP:10.44.0.1
+[centos@kube-master ~]$ curl 172.31.35.73:31579
+HOSTNAME:myip-b4ffc5c6f-6l2hc IP:10.36.0.1
+[centos@kube-master ~]$ curl 172.31.35.73:31579
+HOSTNAME:myip-b4ffc5c6f-dwb7f IP:10.44.0.1
+[centos@kube-master ~]$ curl 172.31.35.73:31579
+HOSTNAME:myip-b4ffc5c6f-6l2hc IP:10.36.0.1
+```
+
+
+
+
 ### Conclusion 
 
 If you do find yourself running large clusters with over 1000 services. IPVS mode is the way to go in order to get the efficiency and performance you require. Even if you are not running huge amounts of services it may be still worth testing as IPVS may become the defacto standard in future Kubernetes releases.
@@ -82,5 +181,8 @@ If you do find yourself running large clusters with over 1000 services. IPVS mod
 [IP Virtual Server (wikipedia)](https://en.wikipedia.org/wiki/IP_Virtual_Server)
 
 [kube-proxy(Kuberenets docs)](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/)
+
+[kubeadm(offical docs)](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
+)
 
 
