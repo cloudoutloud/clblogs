@@ -11,7 +11,10 @@ Need to have kube-proxy running as either IPtables or IPVS mode
 Need to enable [Endpoint Slices](https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/) 
 
 To enable just add the feature gate.
-```--feature-gates="ServiceTopology=true```
+
+```--feature-gates="ServiceTopology=true,EndpointSlice=true"```
+
+This can be enabled on both the kube-apiserver and kube-controller-manager.
 
 If you caught wondering what endpoint slice is, this was introduced in Kubernetes v.1.16. The Topology aware service routing will use this to implement endpoint filtering and then convert to iptables or ipvs rules to implement nearby forwarding.
 
