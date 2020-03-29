@@ -14,7 +14,7 @@ To enable just add the feature gate.
 
 ```--feature-gates="ServiceTopology=true,EndpointSlice=true"```
 
-This can be enabled on both the kube-apiserver and kube-controller-manager.
+This needs to be enabled on all components where feature gates are supported.
 
 If you caught wondering what endpoint slice is, this was introduced in Kubernetes v.1.16. The Topology aware service routing will use this to implement endpoint filtering and then convert to iptables or ipvs rules to implement nearby forwarding.
 
